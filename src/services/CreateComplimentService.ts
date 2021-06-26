@@ -1,6 +1,7 @@
 import { getCustomRepository } from "typeorm";
 import { ComplimentsRepositories } from "../repositories/ComplimentsRepositories";
 import { UsersRepositories } from "../repositories/UsersRepositories";
+import { EndpointError } from "../utils/EndpointError";
 
 interface IComplimentRequest {
   tag_id: string;
@@ -23,11 +24,12 @@ class CreateComplimentService {
     const usersRepositories = getCustomRepository(UsersRepositories);
 
     if (user_sender === user_receiver)
-      throw new Error("Incorrect User Receiver");
+      throw new EndpointError("Incorrect User Receiver", 400);
 
     const userReceiverExists = await usersRepositories.findOne(user_receiver);
 
-    if (!userReceiverExists) throw new Error("User Receiver does not exist!");
+    if (!userReceiverExists)
+      throw new EndpointError("User Receiver does not exist!", 400);
 
     const compliment = complimentsRepositories.create({
       tag_id,

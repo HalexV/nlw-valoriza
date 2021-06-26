@@ -10,6 +10,7 @@ import cors from "cors";
 import "./database";
 
 import { router } from "./routes";
+import { EndpointError } from "./utils/EndpointError";
 
 const app = express();
 
@@ -21,17 +22,19 @@ app.use(router);
 
 // middleware para tratar erros
 // tem que ser colocado depois das rotas para capturar os erros
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof Error) {
-    return res.status(400).json({
-      error: err.message,
+app.use(
+  (err: EndpointError, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof EndpointError) {
+      return res.status(err.statusCode).json({
+        error: err.message,
+      });
+    }
+
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
     });
   }
-
-  return res.status(500).json({
-    status: "error",
-    message: "Internal Server Error",
-  });
-});
+);
 
 app.listen(3000, () => console.log("Server is running"));
