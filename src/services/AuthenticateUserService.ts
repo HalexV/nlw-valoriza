@@ -30,7 +30,7 @@ class AuthenticateUserService {
       {
         email: user.email,
       },
-      "3e0f810b3b85514116a581e4b16af168",
+      process.env.SECRET_KEY,
       {
         subject: user.id,
         expiresIn: "1d",
